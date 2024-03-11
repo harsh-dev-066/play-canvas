@@ -1,27 +1,31 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
 import { logout, reset } from '../redux/auth/authSlice';
 
 import { RiLogoutBoxFill } from 'react-icons/ri';
 import ConfirmMessage from '../utils/confirmModel';
+import { useAppDispatch } from '../app/hooks';
 
 const Navbar = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const onLogOut = async () => {
     // toast.success('Logout successful');
     const confirm = await ConfirmMessage('you want to logout?');
     if (confirm.isConfirmed) {
-      dispatch(
-        logout({
-          cb: () => {
-            dispatch(reset());
-            navigate('/');
-          },
-        })
-      );
+      try {
+        dispatch(
+          logout({
+            cb: () => {
+              dispatch(reset());
+            },
+          })
+        ).unwrap();
+        navigate('/login');
+      } catch (error) {
+        console.log(`Failed ${error}`);
+      }
     }
   };
 

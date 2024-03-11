@@ -1,10 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import reportService from "./reportService";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import reportService from './reportService';
 
 interface State {
   reportData: Record<string, any>;
   reportList: any[];
-  reportPagination: Record<string, any>,
+  reportPagination: Record<string, any>;
   newReport: Record<string, any>;
   isError: boolean;
   isSuccess: boolean;
@@ -21,12 +21,12 @@ const initialState = {
   isSuccess: false,
   isLoading: false,
   isCreateLoading: false,
-  message: "",
+  message: '',
 } as State;
 
 // Get reports
 export const getAllReports = createAsyncThunk(
-  "reports/getAll",
+  'reports/getAll',
   async (payload: object, thunkAPI) => {
     try {
       return await reportService.getReports(payload);
@@ -42,7 +42,7 @@ export const getAllReports = createAsyncThunk(
 
 // Create report
 export const createReport = createAsyncThunk(
-  "reports/create",
+  'reports/create',
   async (reportData: any, thunkAPI) => {
     try {
       const response = await reportService.createReport(reportData.payload);
@@ -59,26 +59,23 @@ export const createReport = createAsyncThunk(
 );
 
 // Delete report
-export const deleteReport = createAsyncThunk(
-  "reports/delete",
-  async (payload: any, thunkAPI) => {
-    try {
-      const res = await reportService.deleteReport(payload.reportId);
-      payload.cb();
-      return res;
-    } catch (err: any) {
-      const message =
-        (err.response && err.response.data && err.response.data.message) ||
-        err.message ||
-        err.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
+export const deleteReport = createAsyncThunk('reports/delete', async (payload: any, thunkAPI) => {
+  try {
+    const res = await reportService.deleteReport(payload.reportId);
+    payload.cb();
+    return res;
+  } catch (err: any) {
+    const message =
+      (err.response && err.response.data && err.response.data.message) ||
+      err.message ||
+      err.toString();
+    return thunkAPI.rejectWithValue(message);
   }
-);
+});
 
 // get report by id
 export const getReportById = createAsyncThunk(
-  "reports/update",
+  'reports/update',
   async (reportId: string, thunkAPI) => {
     try {
       return await reportService.getReportById(reportId);
@@ -94,7 +91,7 @@ export const getReportById = createAsyncThunk(
 
 // Create slice
 export const reportSlice = createSlice({
-  name: "reports",
+  name: 'reports',
   initialState,
   reducers: {
     reset: (state) => initialState,
@@ -108,7 +105,6 @@ export const reportSlice = createSlice({
         state.isCreateLoading = false;
         state.isSuccess = true;
         state.newReport = action.payload.result;
-        window.location.href = `/report/details/${state.newReport.insertId}`
       })
       .addCase(createReport.rejected, (state, action) => {
         state.isCreateLoading = false;
@@ -122,7 +118,7 @@ export const reportSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.reportList = action.payload.result;
-        state.reportPagination = action.payload.pagination
+        state.reportPagination = action.payload.pagination;
       })
       .addCase(getAllReports.rejected, (state, action) => {
         state.isLoading = false;

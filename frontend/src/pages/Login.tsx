@@ -1,11 +1,12 @@
 import { SyntheticEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { login, reset } from '../redux/auth/authSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { RootState } from '../app/store';
 import { StyledLogin } from '../styles/Login.styled';
+import { useAppDispatch } from '../app/hooks';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ const Login = () => {
   // Initialise react-router-dom hook for redirects
   const navigate = useNavigate();
   // Initialise redux hook to dispatch a function
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { user, isError, isSuccess, message } = useSelector((state: RootState) => state.auth);
 
@@ -27,10 +28,9 @@ const Login = () => {
       toast.error(message);
     }
 
-    // if (isSuccess || user) {
-    //   toast.success("Login successful");
-    //   navigate("/");
-    // }
+    if (isSuccess || user) {
+      toast.success('Login successful');
+    }
 
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
@@ -49,9 +49,13 @@ const Login = () => {
     const userData = {
       email,
       password,
-      cb: () => navigate('/'),
     };
-    dispatch(login(userData));
+    try {
+      dispatch(login(userData)).unwrap();
+      navigate('/');
+    } catch (error) {
+      console.log(`Failed ${error}`);
+    }
   };
 
   return (

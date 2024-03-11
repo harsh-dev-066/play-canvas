@@ -1,11 +1,12 @@
 import { SyntheticEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { register, reset } from '../redux/auth/authSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { RootState } from '../app/store';
 import { StyledRegister } from '../styles/Register.styled';
+import { useAppDispatch } from '../app/hooks';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ const Register = () => {
   // Initialise react-router-dom hook for redirects
   const navigate = useNavigate();
   // Initialise redux hook to dispatch a function
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { user, isError, isSuccess, message } = useSelector((state: RootState) => state.auth);
 
@@ -31,7 +32,6 @@ const Register = () => {
 
     if (isSuccess || user) {
       toast.success('Registration successful');
-      navigate('/');
     }
 
     dispatch(reset());
@@ -52,7 +52,12 @@ const Register = () => {
       toast.error('Passwords do not match');
     } else {
       const userData = { name, email, password };
-      dispatch(register(userData));
+      try {
+        dispatch(register(userData)).unwrap();
+        navigate('/login');
+      } catch (error) {
+        console.log(`Failed ${error}`);
+      }
     }
   };
 

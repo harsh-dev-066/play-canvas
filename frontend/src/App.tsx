@@ -3,10 +3,9 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GlobalStyles from './styles/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from './app/store';
 import { DefaultTheme } from 'styled-components';
-// import { getLocalStorage } from "./utils/StorageHelper";
 import { ReactNode, Suspense, lazy, useEffect } from 'react';
 import { getCookie } from './utils/cookieHelper';
 import ReportLoader from './components/loaders/ReportLoader';
@@ -15,14 +14,13 @@ import Navbar from './components/Navbar';
 import ServerLoader from './components/loaders/ServerLoader';
 import { checkServer } from './redux/auth/authSlice';
 import Nav from './components/Nav';
+import { useAppDispatch } from './app/hooks';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const CreateReport = lazy(() => import('./pages/report/create'));
 const ReportDetails = lazy(() => import('./pages/report/details'));
-
-let token = getCookie('token');
 
 function App() {
   // Global theme name space for dashboard styles
@@ -47,7 +45,7 @@ function App() {
     children,
     isCommon = true,
   }: ProtectRouteProps) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const { checkServerLoading } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
@@ -57,7 +55,11 @@ function App() {
     if (checkServerLoading) {
       return <ServerLoader />;
     } else {
-      const isAuthTokenValid = isAllowed ? true : isCommon ? token : !token;
+      const isAuthTokenValid = isAllowed
+        ? true
+        : isCommon
+        ? !!getCookie('token')
+        : !getCookie('token');
 
       return isAuthTokenValid ? (
         <>{children ? children : <Outlet />}</>
@@ -75,7 +77,7 @@ function App() {
         <Spinner />
         <Router>
           <div className="App">
-            {token ? <Navbar /> : <Nav />}
+            {getCookie('token') ? <Navbar /> : <Nav />}
             <Routes>
               {/* <Route path="*" element={<Navigate to={"/login"} replace />} /> */}
               <Route
