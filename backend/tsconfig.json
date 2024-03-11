@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "types": [
+            "node",
+        ],
+        // "typeRoots": [
+        //     "./node_modules/@types"
+        // ],
+        "module": "CommonJS",
+        "target": "es2016",
+        "outDir": "./dist",
+        "rootDir": ".",
+        "declaration": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "noEmit": false
+    },
+    "include": [
+        "server.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}
