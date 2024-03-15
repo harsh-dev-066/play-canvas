@@ -24,7 +24,7 @@ const ReportDetails = lazy(() => import('./pages/report/details'));
 
 function App() {
   // Global theme name space for dashboard styles
-  let theme: DefaultTheme = {
+  const theme: DefaultTheme = {
     colors: {
       backgroundColor: 'white',
       primaryTextColor: 'black',
